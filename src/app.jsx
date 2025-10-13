@@ -33,11 +33,9 @@ const App = () => {
 				<Card className="h-32"/>
 			</div>
 			
-
 			<Card className="text-center">View history</Card>
 		</div>
 	)
 }
-
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />)

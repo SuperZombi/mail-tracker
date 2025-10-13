@@ -13,6 +13,11 @@ const Search = ({placeholder, allowed, onSearch}) => {
 			<input className="outline-none border-0 w-full ps-2"
 				type="text" name="track" placeholder={placeholder}
 				value={query} onChange={onChange}
+				onKeyDown={(e) => {
+					if (e.keyCode == 13){
+						onClick()
+					}
+				}}
 			/>
 			<Card className={`
 				aspect-square flex align-center justify-center !p-2 select-none transition-all duration-200
