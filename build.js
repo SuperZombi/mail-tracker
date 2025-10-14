@@ -27,10 +27,7 @@ esbuild.build({
 	process.exit(1);
 });
 
-const src = path.resolve('index.html');
 const destDir = path.resolve('dist');
-const dest = path.join(destDir, 'index.html');
-
 if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
-fs.copyFileSync(src, dest);
-console.log('📄 index.html copied to dist/');
+fs.copyFileSync(path.resolve('index.html'), path.join(destDir, 'index.html'));
+fs.copyFileSync(path.resolve('icon.png'), path.join(destDir, 'icon.png'));
