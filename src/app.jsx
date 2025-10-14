@@ -24,6 +24,11 @@ const App = () => {
 
 	const [canSearch, setCanSearch] = React.useState(false)
 	const [mailService, setMailService] = React.useState(null)
+	const [history, setHistory] = React.useState([])
+
+	const getService = (value) => {
+		return services.find(s => s.value === value);
+	}
 
 	const onSearchServiceChange = service=>{
 		if (service){
@@ -35,9 +40,29 @@ const App = () => {
 		}
 	}
 
+	React.useEffect(() => {
+		const saved = localStorage.getItem("history")
+		if (saved){ setHistory(JSON.parse(saved)) }
+	}, [])
+
+	React.useEffect(() => {
+		localStorage.setItem("history", JSON.stringify(history))
+	}, [history])
+
 	const onSearch = query => {
-		const target_url = mailService.template.replace("{}", query)
-		window.open(target_url, "_blank");
+		makeRequest(mailService.value, query)
+		setHistory((prev) => {
+			const exists = prev.some(
+				(item) => item.service === mailService.value && item.barcode === query
+			)
+			if (exists) return prev;
+			return [{ "service": mailService.value, "barcode": query }, ...prev]
+		})
+	}
+
+	const makeRequest = (service, query) => {
+		const target_url = getService(service).template.replace("{}", query)
+		window.open(target_url, "_blank")
 	}
 
 	return (
@@ -46,10 +71,21 @@ const App = () => {
 			<Select data={services} placeholder="Select mail service" onChange={onSearchServiceChange}/>
 
 			<div className="grid grid-cols-2 gap-2">
-				<Card className="h-32"/>
-				<Card className="h-32"/>
-				<Card className="h-32"/>
-				<Card className="h-32"/>
+				{[...history, ...Array(Math.max(2 - history.length, (history.length % 2 === 0 ? 0 : 1))).fill(null)
+				 ].map((item, key) => (
+					item ? (
+						<Card key={key} className="
+							!p-2 gap-1 flex flex-col items-center justify-end cursor-pointer select-none
+						" onClick={_=>makeRequest(item.service, item.barcode)}>
+							<img className="h-26 object-contain rounded-lg"
+								src={getService(item.service).img}
+							/>
+							<span>{item.barcode}</span>
+						</Card>
+					) : (
+						<Card key={key} className="h-38"/>
+					)
+				))}
 			</div>
 			
 			<Card className="text-center">View history</Card>
