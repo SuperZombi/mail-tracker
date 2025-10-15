@@ -60,6 +60,7 @@ const App = () => {
 			if (exists) return prev;
 			return [{ "service": mailService.value, "barcode": query }, ...prev]
 		})
+		setCanSearch(false)
 		setMailService(null)
 		setSearchQuery("")
 	}
@@ -67,6 +68,16 @@ const App = () => {
 	const makeRequest = (service, query) => {
 		const target_url = getService(service).template.replace("{}", query)
 		window.open(target_url, "_blank")
+	}
+
+	const openFromHistory = item => {
+		setHistory(prev => {
+			const filtered = prev.filter(
+				h => !(h.service === item.service && h.barcode === item.barcode)
+			)
+			return [item, ...filtered]
+		})
+		makeRequest(item.service, item.barcode)
 	}
 
 	const deleteElement = deleteItem => {
@@ -96,6 +107,23 @@ const App = () => {
 		deleteElement(item)
 	}
 
+	const [isDesktop, setIsDesktop] = useState(false)
+	useEffect(() => {
+		const checkScreen = () => setIsDesktop(window.innerWidth >= 768)
+		checkScreen()
+		window.addEventListener("resize", checkScreen)
+		return () => window.removeEventListener("resize", checkScreen)
+	}, [])
+	const columns = isDesktop ? 4 : 2;
+	const totalItems = Math.max(
+		columns,
+		Math.ceil(history.length / columns) * columns
+	)
+	const paddedHistory = [
+		...history,
+		...Array(totalItems - history.length).fill(null)
+	]
+
 	return (
 		<div className="gap-2 flex flex-col p-2">
 			<Search placeholder="Track number" allowed={canSearch} onSearch={onSearch}
@@ -105,16 +133,15 @@ const App = () => {
 				selected={mailService} setSelected={setMailService}
 			/>
 
-			<div className="grid grid-cols-2 gap-2">
-				{[...history, ...Array(Math.max(2 - history.length, (history.length % 2 === 0 ? 0 : 1))).fill(null)
-				 ].map((item, key) => (
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+				{paddedHistory.map((item, key) => (
 					item ? (
 						<Card key={key} className="
 							!p-2 gap-1 flex flex-col items-center justify-end cursor-pointer select-none
 							active:bg-[rgba(255,255,255,0.15)] active:scale-[0.98] transition
 							hover:bg-[rgba(255,255,255,0.15)]
 						"
-						  onClick={_=>makeRequest(item.service, item.barcode)}
+						  onClick={_=>openFromHistory(item)}
 						  onContextMenu={event=>handleRightClick(event, item)}
 						  onTouchStart={_=>handleStart(item)}
 						  onTouchEnd={handleEnd}
@@ -124,6 +151,7 @@ const App = () => {
 						>
 							<img className="h-26 object-contain rounded-lg"
 								src={getService(item.service).img}
+								draggable="false"
 							/>
 							<span>{item.barcode}</span>
 						</Card>

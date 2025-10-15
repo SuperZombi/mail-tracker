@@ -25,7 +25,8 @@ const Select = ({data, placeholder, onChange, selected, setSelected}) => {
 			<Card className="relative overflow-hidden z-2">
 				{selected ? (
 					<div className="flex justify-between cursor-pointer select-none" onClick={changeSelect}>
-						<img src={selected.img} className="h-6 rounded-sm"/><span>{selected.name}</span>
+						<img src={selected.img} className="h-6 rounded-sm" draggable="false"/>
+						<span>{selected.name}</span>
 					</div>
 				) : (
 					<Fragment>
@@ -51,7 +52,8 @@ const Select = ({data, placeholder, onChange, selected, setSelected}) => {
 					s.name.toLowerCase().includes(query.toLowerCase())
 				).map((item, index) => (
 					<Card key={index} className="flex justify-between cursor-pointer select-none" onClick={_=>onSelect(item)}>
-						<img src={item.img} className="h-6 rounded-sm"/><span>{item.name}</span>
+						<img src={item.img} className="h-6 rounded-sm" draggable="false"/>
+						<span>{item.name}</span>
 					</Card>
 				))}
 			</div>
