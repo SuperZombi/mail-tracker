@@ -1,4 +1,5 @@
 const App = () => {
+	const { useState, useEffect, useRef} = React;
 	const services = [
 		{
 			"name": "An post", "value": "anpost",
@@ -22,9 +23,9 @@ const App = () => {
 		}
 	]
 
-	const [canSearch, setCanSearch] = React.useState(false)
-	const [mailService, setMailService] = React.useState(null)
-	const [history, setHistory] = React.useState([])
+	const [canSearch, setCanSearch] = useState(false)
+	const [mailService, setMailService] = useState(null)
+	const [history, setHistory] = useState([])
 
 	const getService = (value) => {
 		return services.find(s => s.value === value);
@@ -40,12 +41,12 @@ const App = () => {
 		}
 	}
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const saved = localStorage.getItem("history")
 		if (saved){ setHistory(JSON.parse(saved)) }
 	}, [])
 
-	React.useEffect(() => {
+	useEffect(() => {
 		localStorage.setItem("history", JSON.stringify(history))
 	}, [history])
 
@@ -65,18 +66,26 @@ const App = () => {
 		window.open(target_url, "_blank")
 	}
 
-	const timerRef = React.useRef(null);
-	const handleStart = deleteItem => {
+	const deleteElement = deleteItem => {
+		if (confirm(`Delete ${deleteItem.barcode}?`)){
+			setHistory(prev => prev.filter(
+				item => !(item.service === deleteItem.service && item.barcode === deleteItem.barcode)
+			))
+		}
+	}
+
+	const timerRef = useRef(null);
+	const handleStart = item => {
 		timerRef.current = setTimeout(() => {
-			if (confirm(`Delete ${deleteItem.barcode}?`)){
-				setHistory(prev => prev.filter(
-					item => !(item.service === deleteItem.service && item.barcode === deleteItem.barcode)
-				))
-			}
+			deleteElement(item)
 		}, 500)
 	}
 	const handleEnd = _=>{
 		clearTimeout(timerRef.current)
+	}
+	const handleRightClick = (event, item) => {
+		event.preventDefault()
+		deleteElement(item)
 	}
 
 	return (
@@ -91,8 +100,10 @@ const App = () => {
 						<Card key={key} className="
 							!p-2 gap-1 flex flex-col items-center justify-end cursor-pointer select-none
 							active:bg-[rgba(255,255,255,0.15)] active:scale-[0.98] transition
+							hover:bg-[rgba(255,255,255,0.15)]
 						"
 						  onClick={_=>makeRequest(item.service, item.barcode)}
+						  onContextMenu={event=>handleRightClick(event, item)}
 						  onTouchStart={_=>handleStart(item)}
 						  onTouchEnd={handleEnd}
 						  onMouseDown={_=>handleStart(item)}

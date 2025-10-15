@@ -1,7 +1,9 @@
 const Select = ({data, placeholder, onChange}) => {
-	const [focused, setFocused] = React.useState(false)
-	const [query, setQuery] = React.useState("")
-	const [selected, setSelected] = React.useState(null)
+	const { useState, Fragment } = React;
+
+	const [focused, setFocused] = useState(false)
+	const [query, setQuery] = useState("")
+	const [selected, setSelected] = useState(null)
 
 	const onFocus = _=>{ setFocused(true) }
 	const onBlur = _=>{
@@ -27,7 +29,7 @@ const Select = ({data, placeholder, onChange}) => {
 						<img src={selected.img} className="h-6 rounded-sm"/><span>{selected.name}</span>
 					</div>
 				) : (
-					<React.Fragment>
+					<Fragment>
 						<input type="text" onFocus={onFocus} onBlur={onBlur}
 							value={query} onChange={e => setQuery(e.target.value)}
 							name="service" placeholder={placeholder}
@@ -38,7 +40,7 @@ const Select = ({data, placeholder, onChange}) => {
 									absolute top-0 bottom-0 right-3
 							${focused ? "rotate-90" : ""}
 						`} onClick={_=>setFocused(prev=>!prev)}></i>
-					</React.Fragment>
+					</Fragment>
 				)}
 			</Card>
 			
