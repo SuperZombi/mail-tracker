@@ -1,9 +1,8 @@
-const Select = ({data, placeholder, onChange}) => {
+const Select = ({data, placeholder, onChange, selected, setSelected}) => {
 	const { useState, Fragment } = React;
 
 	const [focused, setFocused] = useState(false)
 	const [query, setQuery] = useState("")
-	const [selected, setSelected] = useState(null)
 
 	const onFocus = _=>{ setFocused(true) }
 	const onBlur = _=>{

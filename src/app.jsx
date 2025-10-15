@@ -23,6 +23,7 @@ const App = () => {
 		}
 	]
 
+	const [searchQuery, setSearchQuery] = useState("")
 	const [canSearch, setCanSearch] = useState(false)
 	const [mailService, setMailService] = useState(null)
 	const [history, setHistory] = useState([])
@@ -59,6 +60,8 @@ const App = () => {
 			if (exists) return prev;
 			return [{ "service": mailService.value, "barcode": query }, ...prev]
 		})
+		setMailService(null)
+		setSearchQuery("")
 	}
 
 	const makeRequest = (service, query) => {
@@ -72,6 +75,9 @@ const App = () => {
 				item => !(item.service === deleteItem.service && item.barcode === deleteItem.barcode)
 			))
 		}
+	}
+	const deleteAllHistory = _=>{
+		if (confirm("Delete all history?")){ setHistory([]) }
 	}
 
 	const timerRef = useRef(null);
@@ -90,8 +96,12 @@ const App = () => {
 
 	return (
 		<div className="gap-2 flex flex-col p-2">
-			<Search placeholder="Track number" allowed={canSearch} onSearch={onSearch}/>
-			<Select data={services} placeholder="Select mail service" onChange={onSearchServiceChange}/>
+			<Search placeholder="Track number" allowed={canSearch} onSearch={onSearch}
+				value={searchQuery} setValue={setSearchQuery}
+			/>
+			<Select data={services} placeholder="Select mail service" onChange={onSearchServiceChange}
+				selected={mailService} setSelected={setMailService}
+			/>
 
 			<div className="grid grid-cols-2 gap-2">
 				{[...history, ...Array(Math.max(2 - history.length, (history.length % 2 === 0 ? 0 : 1))).fill(null)
@@ -120,6 +130,12 @@ const App = () => {
 					)
 				))}
 			</div>
+
+			<Card className="text-center cursor-pointer select-none
+				active:bg-[rgba(255,255,255,0.15)] active:scale-[0.98] transition
+				hover:bg-[rgba(255,255,255,0.15)]"
+				onClick={deleteAllHistory}
+			>Delete history</Card>
 		</div>
 	)
 }
