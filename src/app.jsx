@@ -65,6 +65,20 @@ const App = () => {
 		window.open(target_url, "_blank")
 	}
 
+	const timerRef = React.useRef(null);
+	const handleStart = deleteItem => {
+		timerRef.current = setTimeout(() => {
+			if (confirm(`Delete ${deleteItem.barcode}?`)){
+				setHistory(prev => prev.filter(
+					item => !(item.service === deleteItem.service && item.barcode === deleteItem.barcode)
+				))
+			}
+		}, 500)
+	}
+	const handleEnd = _=>{
+		clearTimeout(timerRef.current)
+	}
+
 	return (
 		<div className="gap-2 flex flex-col p-2">
 			<Search placeholder="Track number" allowed={canSearch} onSearch={onSearch}/>
@@ -76,7 +90,15 @@ const App = () => {
 					item ? (
 						<Card key={key} className="
 							!p-2 gap-1 flex flex-col items-center justify-end cursor-pointer select-none
-						" onClick={_=>makeRequest(item.service, item.barcode)}>
+							active:bg-[rgba(255,255,255,0.15)] active:scale-[0.98] transition
+						"
+						  onClick={_=>makeRequest(item.service, item.barcode)}
+						  onTouchStart={_=>handleStart(item)}
+						  onTouchEnd={handleEnd}
+						  onMouseDown={_=>handleStart(item)}
+						  onMouseUp={handleEnd}
+						  onMouseLeave={handleEnd}
+						>
 							<img className="h-26 object-contain rounded-lg"
 								src={getService(item.service).img}
 							/>
@@ -87,8 +109,6 @@ const App = () => {
 					)
 				))}
 			</div>
-			
-			<Card className="text-center">View history</Card>
 		</div>
 	)
 }
