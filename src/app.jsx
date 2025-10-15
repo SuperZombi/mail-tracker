@@ -70,7 +70,7 @@ const App = () => {
 	}
 
 	const deleteElement = deleteItem => {
-		if (confirm(`Delete ${deleteItem.barcode}?`)){
+		if (confirm(`Delete «${deleteItem.barcode}»?`)){
 			setHistory(prev => prev.filter(
 				item => !(item.service === deleteItem.service && item.barcode === deleteItem.barcode)
 			))
@@ -82,6 +82,7 @@ const App = () => {
 
 	const timerRef = useRef(null);
 	const handleStart = item => {
+		clearTimeout(timerRef.current)
 		timerRef.current = setTimeout(() => {
 			deleteElement(item)
 		}, 500)
@@ -91,6 +92,7 @@ const App = () => {
 	}
 	const handleRightClick = (event, item) => {
 		event.preventDefault()
+		clearTimeout(timerRef.current)
 		deleteElement(item)
 	}
 
