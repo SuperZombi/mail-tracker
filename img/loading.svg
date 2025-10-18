@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="a" x1="0%" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="50%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <circle cx="40" cy="65" r="15" fill="url(#a)">
+    <animate attributeName="cy" begin="-.4s" calcMode="spline" dur="1s" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" values="65;135;65;"/>
+  </circle>
+  <circle cx="100" cy="65" r="15" fill="url(#a)">
+    <animate attributeName="cy" begin="-.2s" calcMode="spline" dur="1s" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" values="65;135;65;"/>
+  </circle>
+  <circle cx="160" cy="65" r="15" fill="url(#a)">
+    <animate attributeName="cy" begin="0s" calcMode="spline" dur="1s" keySplines=".5 0 .5 1;.5 0 .5 1" repeatCount="indefinite" values="65;135;65;"/>
+  </circle>
+</svg>

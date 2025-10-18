@@ -1,4 +1,4 @@
-const Select = ({data, placeholder, onChange, selected, setSelected}) => {
+const Select = ({data, name, placeholder, onChange, selected, setSelected}) => {
 	const { useState, Fragment } = React;
 
 	const [focused, setFocused] = useState(false)
@@ -32,7 +32,7 @@ const Select = ({data, placeholder, onChange, selected, setSelected}) => {
 					<Fragment>
 						<input type="text" onFocus={onFocus} onBlur={onBlur}
 							value={query} onChange={e => setQuery(e.target.value)}
-							name="service" placeholder={placeholder}
+							name={name} placeholder={placeholder}
 							className="outline-none border-0 w-9/10"
 						/>
 						<i className={`fa-solid fa-chevron-down transition-all duration-200

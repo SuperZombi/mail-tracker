@@ -1,4 +1,4 @@
-const Search = ({placeholder, allowed, onSearch, value, setValue}) => {
+const Search = ({placeholder, name, allowed, onSearch, value, setValue}) => {
 	const onChange = e=>{
 		setValue(e.target.value)
 	}
@@ -10,7 +10,7 @@ const Search = ({placeholder, allowed, onSearch, value, setValue}) => {
 	return (
 		<Card className="flex justify-between !p-2 z-2">
 			<input className="outline-none border-0 w-full ps-2"
-				type="text" name="track" placeholder={placeholder}
+				type="text" name={name} placeholder={placeholder}
 				value={value} onChange={onChange}
 				onKeyDown={(e) => {
 					if (e.keyCode == 13){

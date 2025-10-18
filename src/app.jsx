@@ -1,5 +1,5 @@
 const App = () => {
-	const { useState, useEffect, useRef} = React;
+	const { useState, useEffect, useRef, Fragment} = React;
 	const services = [
 		{
 			"name": "An post", "value": "anpost",
@@ -27,9 +27,35 @@ const App = () => {
 	const [canSearch, setCanSearch] = useState(false)
 	const [mailService, setMailService] = useState(null)
 	const [history, setHistory] = useState([])
+	const [searchParams, setSearchParams] = useState(() => new URLSearchParams(window.location.search))
+	const [service, code] = [searchParams.get("service"), searchParams.get("code")]
+	const [trackingData, setTrackingData] = useState(null)
 
 	const getService = (value) => {
 		return services.find(s => s.value === value);
+	}
+
+	useEffect(_=>{
+		const handler = _=>{
+			setSearchParams(new URLSearchParams(window.location.search))
+		}
+
+		window.addEventListener("popstate", handler)
+		return _=>{window.removeEventListener("popstate", handler)}
+	}, [])
+
+	const changeQuery = paramsObj => {
+		const params = new URLSearchParams(window.location.search)
+		Object.entries(paramsObj).forEach(([key, value])=>{
+			params.set(key, value)
+		})
+		const newUrl = `${window.location.pathname}?${params.toString()}`
+		window.history.pushState({}, "", newUrl)
+		setSearchParams(params)
+	}
+	const goHome = () => {
+		window.history.pushState({}, "", window.location.pathname)
+		setSearchParams(new URLSearchParams())
 	}
 
 	const onSearchServiceChange = service=>{
@@ -51,32 +77,52 @@ const App = () => {
 		localStorage.setItem("history", JSON.stringify(history))
 	}, [history])
 
+	useEffect(()=>{
+		setTrackingData(null)
+		if (service && code){
+			saveToHistory(service, code)
+			const timer = setTimeout(_=>{
+				if (code === "test"){
+					setTrackingData([
+						{"time": 1747270080, "text": "Your item has been delivered"},
+						{"time": 1747252380, "text": "Your item is out for delivery"},
+						{"time": 1746973620, "text": "We have received information about your incoming item from the sender"}
+					])
+				} else {
+					setTrackingData([])
+				}
+			}, 500)
+			return _=> clearTimeout(timer)
+		}
+	}, [service, code])
+
 	const onSearch = query => {
 		makeRequest(mailService.value, query)
-		setHistory((prev) => {
-			const exists = prev.some(
-				(item) => item.service === mailService.value && item.barcode === query
-			)
-			if (exists) return prev;
-			return [{ "service": mailService.value, "barcode": query }, ...prev]
-		})
 		setCanSearch(false)
 		setMailService(null)
 		setSearchQuery("")
 	}
 
-	const makeRequest = (service, query) => {
+	const openInNewTab = (service, query) => {
 		const target_url = getService(service).template.replace("{}", query)
 		window.open(target_url, "_blank")
 	}
 
-	const openFromHistory = item => {
+	const makeRequest = (service, query) => {
+		changeQuery({"service": service, "code": query})
+		saveToHistory(service, query)
+	}
+
+	const saveToHistory = (s, c) => {
 		setHistory(prev => {
 			const filtered = prev.filter(
-				h => !(h.service === item.service && h.barcode === item.barcode)
+				h => !(h.service === s && h.barcode === c)
 			)
-			return [item, ...filtered]
+			return [{ "service": s, "barcode": c }, ...filtered]
 		})
+	}
+
+	const openFromHistory = item => {
 		makeRequest(item.service, item.barcode)
 	}
 
@@ -124,49 +170,92 @@ const App = () => {
 		...Array(totalItems - history.length).fill(null)
 	]
 
-	return (
-		<div className="gap-2 flex flex-col p-2">
-			<Search placeholder="Track number" allowed={canSearch} onSearch={onSearch}
-				value={searchQuery} setValue={setSearchQuery}
-			/>
-			<Select data={services} placeholder="Select mail service" onChange={onSearchServiceChange}
-				selected={mailService} setSelected={setMailService}
-			/>
-
-			<div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-				{paddedHistory.map((item, key) => (
-					item ? (
-						<Card key={key} className="
-							!p-2 gap-1 flex flex-col items-center justify-end cursor-pointer select-none
-							active:bg-[rgba(255,255,255,0.15)] active:scale-[0.98] transition
-							hover:bg-[rgba(255,255,255,0.15)]
-						"
-						  onClick={_=>openFromHistory(item)}
-						  onContextMenu={event=>handleRightClick(event, item)}
-						  onTouchStart={_=>handleStart(item)}
-						  onTouchEnd={handleEnd}
-						  onMouseDown={_=>handleStart(item)}
-						  onMouseUp={handleEnd}
-						  onMouseLeave={handleEnd}
-						>
-							<img className="h-26 object-contain rounded-lg"
-								src={getService(item.service).img}
+	
+	if (service && code){
+		return (
+			<Fragment>
+				<Header home={goHome}/>
+				<div className="p-2 flex flex-col gap-2">
+					<Card className="flex justify-between items-center gap-2 !px-3">
+						<div className="inline-flex gap-3 items-center max-w-full overflow-hidden">
+							<img className="h-12 object-contain rounded-lg select-none"
+								src={getService(service).img}
 								draggable="false"
 							/>
-							<span>{item.barcode}</span>
-						</Card>
-					) : (
-						<Card key={key} className="h-38"/>
-					)
-				))}
-			</div>
+							<span className="font-bold truncate overflow-hidden whitespace-nowrap">{code}</span>
+						</div>
+						<div className="text-xs flex gap-2">
+							<Card className="aspect-square flex cursor-pointer w-fit h-fit !p-3
+								transition-all duration-200 active:bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.15)]
+							" onClick={_=>navigator.clipboard.writeText(window.location.href)}>
+								<i className="fa-solid fa-copy"></i>
+							</Card>
 
-			<Card className="text-center cursor-pointer select-none
-				active:bg-[rgba(255,255,255,0.15)] active:scale-[0.98] transition
-				hover:bg-[rgba(255,255,255,0.15)]"
-				onClick={deleteAllHistory}
-			>Delete history</Card>
-		</div>
+							<Card className="aspect-square flex cursor-pointer w-fit h-fit !p-3
+								transition-all duration-200 active:bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.15)]
+							" onClick={_=>openInNewTab(service, code)}>
+								<i className="fa-solid fa-up-right-from-square"></i>
+							</Card>
+						</div>
+					</Card>
+					<Card>
+						{trackingData ? (
+							<DeliveryTimeline events={trackingData}/>
+						) : (
+							<img src="img/loading.svg" className="h-16 m-auto"/>
+						)}
+					</Card>
+				</div>
+			</Fragment>
+		)
+	}
+
+	return (
+		<Fragment>
+			<Header home={goHome}/>
+			<div className="gap-2 flex flex-col p-2">
+				<Search name="code" placeholder="Track number" allowed={canSearch} onSearch={onSearch}
+					value={searchQuery} setValue={setSearchQuery}
+				/>
+				<Select name="service" data={services} placeholder="Select mail service" onChange={onSearchServiceChange}
+					selected={mailService} setSelected={setMailService}
+				/>
+
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+					{paddedHistory.map((item, key) => (
+						item ? (
+							<Card key={key} className="
+								!p-2 gap-2 flex flex-col items-center justify-end cursor-pointer select-none
+								active:bg-[rgba(255,255,255,0.15)] active:scale-[0.98] transition
+								hover:bg-[rgba(255,255,255,0.15)]
+							"
+							  onClick={_=>openFromHistory(item)}
+							  onContextMenu={event=>handleRightClick(event, item)}
+							  onTouchStart={_=>handleStart(item)}
+							  onTouchEnd={handleEnd}
+							  onMouseDown={_=>handleStart(item)}
+							  onMouseUp={handleEnd}
+							  onMouseLeave={handleEnd}
+							>
+								<img className="h-24 object-contain rounded-lg"
+									src={getService(item.service).img}
+									draggable="false"
+								/>
+								<span className="font-bold">{item.barcode}</span>
+							</Card>
+						) : (
+							<Card key={key} className="h-38"/>
+						)
+					))}
+				</div>
+
+				<Card className="text-center cursor-pointer select-none
+					active:bg-[rgba(255,255,255,0.15)] active:scale-[0.98] transition
+					hover:bg-[rgba(255,255,255,0.15)]"
+					onClick={deleteAllHistory}
+				>Delete history</Card>
+			</div>
+		</Fragment>
 	)
 }
 
