@@ -2,7 +2,7 @@
 
 @layer base {
 	body {
-		@apply bg-[#212121];
-		@apply text-white;
+		@apply text-[#eef6ff];
+		background: linear-gradient(120deg, #0b1220 0%, #111827 50%, #0f1724 100%);
 	}
 }

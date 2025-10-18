@@ -29,5 +29,6 @@ esbuild.build({
 
 const destDir = path.resolve('dist');
 if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
+
 fs.copyFileSync(path.resolve('index.html'), path.join(destDir, 'index.html'));
-fs.copyFileSync(path.resolve('icon.png'), path.join(destDir, 'icon.png'));
+fs.cpSync(path.resolve("src/img"), path.join(destDir, "img"), { recursive: true });
