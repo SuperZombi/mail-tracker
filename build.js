@@ -31,4 +31,4 @@ const destDir = path.resolve('dist');
 if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
 
 fs.copyFileSync(path.resolve('index.html'), path.join(destDir, 'index.html'));
-fs.cpSync(path.resolve("src/img"), path.join(destDir, "img"), { recursive: true });
+fs.cpSync(path.resolve("img"), path.join(destDir, "img"), { recursive: true });
