@@ -4,9 +4,9 @@
 	body {
 		color: #eef6ff;
 		min-height: 100dvh;
-		background: linear-gradient(120deg, #141b2e 0%, #1a2338 50%, #171f2f 100%);
-		background-size: 400% 400%;
-		animation: gradientShift 15s ease infinite;
+		background: linear-gradient(120deg, #1a1f36 0%, #2a2d55 50%, #1c1b33 100%);
+		background-size: 300% 300%;
+		animation: gradientShift 20s ease infinite;
 	}
 	input:-webkit-autofill,
 	textarea:-webkit-autofill,
@@ -20,8 +20,14 @@
 		0% {
 			background-position: 0% 50%;
 		}
+		25% {
+			background-position: 50% 100%;
+		}
 		50% {
 			background-position: 100% 50%;
+		}
+		75% {
+			background-position: 50% 0%;
 		}
 		100% {
 			background-position: 0% 50%;
