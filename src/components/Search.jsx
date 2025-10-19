@@ -18,14 +18,12 @@ const Search = ({placeholder, name, allowed, onSearch, value, setValue}) => {
 					}
 				}}
 			/>
-			<Card className={`
-				aspect-square flex align-center justify-center !p-2 select-none transition-all duration-200
-				${(allowed && value != "") ? (
-					"opacity-100 cursor-pointer active:bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.15)]"
-				) : "opacity-70 cursor-not-allowed"}
-			`} onClick={onClick}>
-				<i className="fa-solid fa-magnifying-glass fa-rotate-90"></i>
-			</Card>
+			<CardButton className="aspect-square flex w-fit h-fit !p-2"
+				disabled={!(allowed && value != "")}
+				onClick={onClick}
+			>
+				<i className="fa-solid fa-magnifying-glass fa-rotate-90"/>
+			</CardButton>
 		</Card>
 	)
 }

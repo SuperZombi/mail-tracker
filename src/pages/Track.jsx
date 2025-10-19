@@ -12,17 +12,14 @@ const TrackPage = ({service, barcode, trackingData}) => {
 						<span className="font-bold truncate overflow-hidden whitespace-nowrap">{barcode}</span>
 					</div>
 					<div className="text-xs flex gap-2">
-						<Card className="aspect-square flex cursor-pointer w-fit h-fit !p-3
-							transition-all duration-200 active:bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.15)]
-						" onClick={_=>navigator.clipboard.writeText(window.location.href)}>
-							<i className="fa-solid fa-copy"></i>
-						</Card>
-
-						<Card className="aspect-square flex cursor-pointer w-fit h-fit !p-3
-							transition-all duration-200 active:bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.15)]
-						" onClick={_=>openInNewTab(service, barcode)}>
-							<i className="fa-solid fa-up-right-from-square"></i>
-						</Card>
+						<CardButton className="aspect-square flex w-fit h-fit !p-3"
+							onClick={_=>navigator.clipboard.writeText(window.location.href)}>
+							<i className="fa-solid fa-copy"/>
+						</CardButton>
+						<CardButton className="aspect-square flex w-fit h-fit !p-3"
+							onClick={_=>openInNewTab(service, barcode)}>
+							<i className="fa-solid fa-up-right-from-square"/>
+						</CardButton>
 					</div>
 				</Card>
 				<Card>
