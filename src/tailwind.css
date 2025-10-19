@@ -7,6 +7,7 @@
 		background: linear-gradient(120deg, #1a1f36 0%, #2a2d55 50%, #1c1b33 100%);
 		background-size: 300% 300%;
 		animation: gradientShift 20s ease infinite;
+		color-scheme: dark;
 	}
 	input:-webkit-autofill,
 	textarea:-webkit-autofill,
