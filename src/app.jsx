@@ -20,9 +20,9 @@ const App = () => {
 			const timer = setTimeout(_=>{
 				if (code === "test"){
 					setTrackingData([
-						{"time": 1747270080, "text": "Your item has been delivered"},
-						{"time": 1747252380, "text": "Your item is out for delivery"},
-						{"time": 1746973620, "text": "We have received information about your incoming item from the sender"}
+						{"time": 1760438880, "text": "Your item has been delivered"},
+						{"time": 1760422380, "text": "Your item is out for delivery"},
+						{"time": 1760142420, "text": "We have received information about your incoming item from the sender"}
 					])
 				} else {
 					setTrackingData([])
