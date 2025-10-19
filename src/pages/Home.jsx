@@ -70,7 +70,6 @@ const History = ({ history, setHistory, openFromHistory }) => {
 		deleteElement(item)
 	}
 
-
 	const [isDesktop, setIsDesktop] = useState(false)
 	useEffect(() => {
 		const checkScreen = () => setIsDesktop(window.innerWidth >= 768)
